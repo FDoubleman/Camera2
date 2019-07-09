@@ -258,19 +258,23 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
     }
 
     /**
-     * 打开相机
+     * 第一步： 打开相机
      */
     private void openCamera(int width, int height) {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
+            // 请求相机权限
             requestCameraPermission();
             return;
         }
+        // 设置相机相关参数
         setUpCameraOutputs(width, height);
+        // 配置必要的矩阵 转换为“mTextureView”。
         configureTransform(width, height);
         Activity activity = getActivity();
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
+            // 线程同步锁的作用
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
@@ -754,7 +758,7 @@ public class Camera2BasicFragment extends Fragment implements View.OnClickListen
     }
 
     /**
-     * Starts a background thread and its {@link Handler}.
+     * 创建后台线程 以及 Handler
      */
     private void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("CameraBackground");
